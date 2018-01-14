@@ -16,4 +16,5 @@
     </string>
     <string name="com.twitter.sdk.android.CONSUMER_KEY">bK8BWOJSK3MILlZ8CS93zMnGw</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET"> K8ZGbLr9EQVXyAPl2Qw63Z4WxV5FtiGVdoAEkeoqqdSnGoJ6nt</string>
+    <string name="title_activity_feed">FeedActivity</string>
 </resources>
