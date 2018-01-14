@@ -34,7 +34,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(Result<TwitterSession> result) {
                 Toast.makeText(LoginActivity.this, "IT WORKS!", Toast.LENGTH_SHORT).show();
-                session = result.data;
+                Intent intent = new Intent(getApplicationContext(), FeedActivity.class);
+                startActivity(intent);
             }
 
             @Override
