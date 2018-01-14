@@ -77,6 +77,7 @@ public class FeedActivity extends AppCompatActivity {
 
         for(Tweet tweet : tweets) {
             // Do something here
+
         }
     }
 }
