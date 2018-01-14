@@ -1,6 +1,10 @@
 package com.nwhacksjss.android.nwhacks;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,74 +34,64 @@ import retrofit2.Response;
 
 public class FeedActivity extends AppCompatActivity {
 
-    private List<Tweet> tweets = new ArrayList<>();
+    private List<Tweet> tweets;
     private ArrayList<LatLng> tweetCoords;
     private LinearLayout linearLayout;
     private Long lastSinceId;
+    private static Geocode currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        tweetCoords = new ArrayList<LatLng>();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        tweetCoords = new ArrayList<>();
+        tweets = new ArrayList<>();
+        lastSinceId = 951701941301624832l; // TODO: generate new sinceId for each instance
+        linearLayout = findViewById(R.id.feed_layout);
 
+        addMapButton();
+
+        if (getCurrentLocation()) {
+            startAPIClient(currentLocation);
+        } else Toast.makeText(getApplicationContext(), "Can not find current location.", Toast.LENGTH_SHORT).show();
+    }
+
+    private Boolean getCurrentLocation() {
+        try {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            String provider = locationManager.getBestProvider(new Criteria(), false);
+            if (provider != null) {
+                Location location = locationManager.getLastKnownLocation(provider);
+                double lat = location.getLatitude();
+                double lon = location.getLongitude();
+                currentLocation = new Geocode(lat, lon, 1000, Geocode.Distance.KILOMETERS);
+                return true;
+            }
+        } catch (SecurityException e) {
+            Toast.makeText(getApplicationContext(), "Location access is not enabled.", Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
+    }
+
+    private void addMapButton() {
         Button goToMap = findViewById(R.id.button_id);
         goToMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent mapIntent = new Intent(getApplicationContext(), GoogleMapsActivity.class);
-                mapIntent.putParcelableArrayListExtra("location_list", tweetCoords);
                 startActivity(mapIntent);
             }
         });
-        /*
-        // We can possibly use an action button on the feed later on.
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
-        linearLayout = findViewById(R.id.feed_layout);
-
-        Geocode currentLocation = new Geocode(49.2606, -123.2460, 1000, Geocode.Distance.MILES);
-
-        //Geocode currentLocation = GoogleMapsActivity.getCurrentLocation();
-
-        startAPIClient(currentLocation);
     }
 
     private void startAPIClient(Geocode currentLocation) {
         TwitterCore twitterCore = TwitterCore.getInstance();
-        TwitterApiClient client  = twitterCore.getApiClient();
-        SearchService searchService = client.getSearchService();
+        TwitterApiClient client = twitterCore.getApiClient();
+        final SearchService searchService = client.getSearchService();
 
-        //private void makeSearchCall()
-        /*
-        Call<Search> firstCall = searchService.tweets("", null, null, null, "popular", 1, "2018-01-01", null, null, null);
-
-        firstCall.enqueue(new Callback<Search>() {
-            @Override
-            public void onResponse(Call<Search> call, Response<Search> response) {
-                Tweet tweet = response.body().tweets.get(0);
-                lastSinceId = tweet.getId();
-            }
-
-            @Override
-            public void onFailure(Call<Search> call, Throwable t) {
-                Toast.makeText(FeedActivity.this, "Can not find tweets near you", Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
-        Call<Search> secondCall = searchService.tweets("", currentLocation, null, null, null, 100, null, null, null, null);
+        Call<Search> secondCall = searchService.tweets("", FeedActivity.currentLocation, null, null, null, 100, null, lastSinceId, null, null);
 
         secondCall.enqueue(new Callback<Search>() {
             @Override
@@ -114,8 +108,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private void parseSearchResponse(Response<Search> response) {
         Search results = response.body();
-        List<Tweet> tweets = results.tweets;
-
+        tweets = results.tweets;
 
         if (tweets.isEmpty()) {
             Toast.makeText(FeedActivity.this, "No new tweets near you", Toast.LENGTH_SHORT).show();
@@ -131,9 +124,5 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    public void getTweetWithCoordinates() {
-        // TODO
     }
 }
