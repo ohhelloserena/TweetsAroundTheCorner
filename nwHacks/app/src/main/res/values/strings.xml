@@ -27,4 +27,7 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_google_maps">Map</string>
 
+    <!-- Feed -->
+    <string name="map">MAP</string>
+
 </resources>
