@@ -45,7 +45,8 @@
 
         <activity
             android:name=".GoogleMapsActivity"
-            android:label="@string/title_activity_google_maps"></activity>
+            android:label="@string/title_activity_google_maps">
+        </activity>
         <activity
             android:name=".FeedActivity"
             android:label="@string/title_activity_feed"
