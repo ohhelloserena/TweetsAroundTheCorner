@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -16,8 +15,6 @@ import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.core.services.params.Geocode;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -26,14 +23,16 @@ import retrofit2.Response;
 
 public class FeedActivity extends AppCompatActivity {
 
+    List<Tweet> tweets;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed2);
+        setContentView(R.layout.activity_feed);
 
-        //NOT SURE WHAT THIS DOES YET
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        //NOT SURE WHAT THIS DOES YET
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +73,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private void parseSearchResponse(Response<Search> response) {
         Search results = response.body();
-        List<Tweet> tweets = results.tweets;
+        tweets = results.tweets;
 
         for(Tweet tweet : tweets) {
             // Do something here
