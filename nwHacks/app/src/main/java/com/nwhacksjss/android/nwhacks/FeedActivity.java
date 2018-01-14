@@ -1,10 +1,12 @@
 package com.nwhacksjss.android.nwhacks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -32,10 +34,17 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-//        //NOT SURE WHAT THIS DOES YET
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
+        Button goToMap = findViewById(R.id.button_id);
+        goToMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapIntent = new Intent(getApplicationContext(), GoogleMapsActivity.class);
+                startActivity(mapIntent);
+            }
+        });
         /*
         // We can possibly use an action button on the feed later on.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -50,7 +59,7 @@ public class FeedActivity extends AppCompatActivity {
 
         linearLayout = findViewById(R.id.feed_layout);
 
-        Geocode currentLocation = new Geocode(49.2606, 123.2460, 1000, Geocode.Distance.KILOMETERS);
+        Geocode currentLocation = new Geocode(49.2606, 123.2460, 10, Geocode.Distance.MILES);
 
         //Geocode currentLocation = GoogleMapsActivity.getCurrentLocation();
 
@@ -61,7 +70,7 @@ public class FeedActivity extends AppCompatActivity {
         TwitterCore twitterCore = TwitterCore.getInstance();
         TwitterApiClient client  = twitterCore.getApiClient();
         SearchService searchService = client.getSearchService();
-        Call<Search> call = searchService.tweets("", currentLocation, null, null, "recent", 10, null, null, null, null);
+        Call<Search> call = searchService.tweets("", currentLocation, null, null, null, 10, null, null, null, null);
 
         call.enqueue(new Callback<Search>() {
             @Override

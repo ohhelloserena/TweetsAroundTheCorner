@@ -30,4 +30,7 @@
     <string name="permission_required_toast">WE NEED PERMISSION.</string>
     <string name="location_permission_denied">Location permission denied.</string>
 
+    <!-- Feed -->
+    <string name="map">MAP</string>
+
 </resources>
