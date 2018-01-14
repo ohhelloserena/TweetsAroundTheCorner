@@ -26,6 +26,7 @@ import com.twitter.sdk.android.core.services.params.Geocode;
 import com.twitter.sdk.android.tweetui.TweetView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FeedActivity extends AppCompatActivity {
-
+    private HashMap<Long, LatLng> tweetIdCoordinates= new HashMap<>();
     private List<Tweet> tweets;
     private ArrayList<LatLng> tweetCoords;
     private LinearLayout linearLayout;
@@ -81,9 +82,11 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent mapIntent = new Intent(getApplicationContext(), GoogleMapsActivity.class);
+                mapIntent.putExtra("tweet_map", tweetIdCoordinates);
                 startActivity(mapIntent);
             }
         });
+
     }
 
     private void startAPIClient(Geocode currentLocation) {
@@ -120,7 +123,7 @@ public class FeedActivity extends AppCompatActivity {
                 if (tweet.coordinates != null) {
                     LatLng coords = new LatLng(tweet.coordinates.getLatitude(), tweet.coordinates.getLongitude());
 
-                    tweetCoords.add(coords);
+                    tweetIdCoordinates.put(tweet.id, coords);
                 }
             }
         }

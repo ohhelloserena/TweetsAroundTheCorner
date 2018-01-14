@@ -21,13 +21,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.nwhacksjss.android.nwhacks.Utils.PermissionUtils;
+import com.twitter.sdk.android.core.models.Tweet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GoogleMapsActivity extends AppCompatActivity
@@ -54,6 +57,8 @@ public class GoogleMapsActivity extends AppCompatActivity
 
     private GoogleMap mMap;
 
+    private GoogleMap.InfoWindowAdapter iwa;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -65,6 +70,8 @@ public class GoogleMapsActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        iwa = new TweetInfoWindowAdapter();
     }
 
     /**
@@ -84,6 +91,9 @@ public class GoogleMapsActivity extends AppCompatActivity
 
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+
+        mMap.setInfoWindowAdapter(iwa);
+
         enableMyLocation();
         try {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -106,10 +116,11 @@ public class GoogleMapsActivity extends AppCompatActivity
     }
 
     private void plotTweets() {
-        ArrayList<LatLng> locList = getIntent().getParcelableArrayListExtra("location_list");
+        HashMap<Long, LatLng> tweetMap = (HashMap<Long, LatLng>) getIntent().getSerializableExtra("tweet_map");
 
-        for (LatLng point : locList) {
-            mMap.addMarker(new MarkerOptions().position(point));
+        for (Long id : tweetMap.keySet()) {
+            LatLng coords = tweetMap.get(id);
+            mMap.addMarker(new MarkerOptions().position(coords).icon(BitmapDescriptorFactory.defaultMarker(203)).title(Long.toString(id)));
         }
     }
 
