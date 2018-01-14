@@ -68,7 +68,7 @@ public class FeedActivity extends AppCompatActivity {
 
         linearLayout = findViewById(R.id.feed_layout);
 
-        Geocode currentLocation = new Geocode(49.2606, 123.2460, 1000, Geocode.Distance.MILES);
+        Geocode currentLocation = new Geocode(49.2606, -123.2460, 1000, Geocode.Distance.MILES);
 
         //Geocode currentLocation = GoogleMapsActivity.getCurrentLocation();
 
@@ -97,7 +97,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         });*/
 
-        Call<Search> secondCall = searchService.tweets("", currentLocation, null, null, null, 10, null, null, null, null);
+        Call<Search> secondCall = searchService.tweets("", currentLocation, null, null, null, 100, null, null, null, null);
 
         secondCall.enqueue(new Callback<Search>() {
             @Override
@@ -124,9 +124,11 @@ public class FeedActivity extends AppCompatActivity {
                 TweetView tweetView = new TweetView(FeedActivity.this, tweet);
                 linearLayout.addView(tweetView);
 
-                LatLng coords = new LatLng(tweet.coordinates.getLatitude(), tweet.coordinates.getLongitude());
+                if (tweet.coordinates != null) {
+                    LatLng coords = new LatLng(tweet.coordinates.getLatitude(), tweet.coordinates.getLongitude());
 
-                tweetCoords.add(coords);
+                    tweetCoords.add(coords);
+                }
             }
         }
     }

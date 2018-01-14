@@ -65,8 +65,6 @@ public class GoogleMapsActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
     }
 
     /**
@@ -92,10 +90,12 @@ public class GoogleMapsActivity extends AppCompatActivity
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), false));
             double lat = location.getLatitude();
             double lon = location.getLongitude();
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lon)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 15));
         } catch (SecurityException e) {
             Toast.makeText(getApplicationContext(), "Location access is not enabled.", Toast.LENGTH_SHORT).show();
         }
+
+        plotTweets();
 
         // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -103,6 +103,14 @@ public class GoogleMapsActivity extends AppCompatActivity
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 //
 //        getDeviceLocation();
+    }
+
+    private void plotTweets() {
+        ArrayList<LatLng> locList = getIntent().getParcelableArrayListExtra("location_list");
+
+        for (LatLng point : locList) {
+            mMap.addMarker(new MarkerOptions().position(point));
+        }
     }
 
     /**
