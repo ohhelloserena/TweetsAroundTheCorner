@@ -14,6 +14,7 @@ import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.core.services.params.Geocode;
+import com.twitter.sdk.android.tweetui.TweetView;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import retrofit2.Response;
 public class FeedActivity extends AppCompatActivity {
 
     List<Tweet> tweets;
+    LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,8 @@ public class FeedActivity extends AppCompatActivity {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
+        /*
+        // We can possibly use an action button on the feed later on.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,10 +46,11 @@ public class FeedActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        */
 
-        final LinearLayout layout;
+        linearLayout = findViewById(R.id.feed_layout);
 
-        Geocode currentLocation = new Geocode(49.2606, 123.2460, 1, Geocode.Distance.KILOMETERS);
+        Geocode currentLocation = new Geocode(49.2606, 123.2460, 1000, Geocode.Distance.KILOMETERS);
 
         //Geocode currentLocation = GoogleMapsActivity.getCurrentLocation();
 
@@ -73,11 +78,13 @@ public class FeedActivity extends AppCompatActivity {
 
     private void parseSearchResponse(Response<Search> response) {
         Search results = response.body();
-        tweets = results.tweets;
+        List<Tweet> tweets = results.tweets;
 
         for(Tweet tweet : tweets) {
             // Do something here
-
+            //layout.addView
+            TweetView tweetView = new TweetView(FeedActivity.this, tweet);
+            linearLayout.addView(tweetView);
         }
     }
 }
